@@ -13,6 +13,11 @@ window.addEventListener("load", () => {
       this.collisionX = this.game.width * 0.5; // Defines position on X axis
       this.collisionY = this.game.height * 0.5; // Defines position on Y axis
       this.collisionRadius = 30; // Defines size of object
+      this.speedX = 0;
+      this.speedY = 0;
+      this.dx = 0; // Distance between mouse and player horizontally
+      this.dy = 0; // Distance between mouse and player vertically
+      this.speedModifier =  5;
     }
 
     draw(context) {
@@ -34,6 +39,40 @@ window.addEventListener("load", () => {
       context.restore(); // Restores previous status
       
       context.stroke();
+      
+      // new shape
+      
+      context.beginPath();
+      context.moveTo(this.collisionX, this.collisionY); // draw starting points
+      context.lineTo(this.game.mouse.x, this.game.mouse.y); // draw ending point
+      context.stroke(); // draw the line
+    }
+    
+    update(){
+      // Technique 1:
+      // Find diference between mouse position and player position. Divide to make it slower
+      // Isn't a constant velocity because it decreases the closer it gets to the point
+      // this.dx = this.game.mouse.x - this.collisionX;
+      // this.dy = this.game.mouse.y - this.collisionY;
+      // this.speedX = (this.dx) / 20;
+      // this.speedY = (this.dy) / 20;
+      
+      // Technique 2:
+      // Find hypotenuse (distance between teoria pitagoras)
+      this.dx = this.game.mouse.x - this.collisionX;
+      this.dy = this.game.mouse.y - this.collisionY;
+      const distance = Math.hypot(this.dy, this.dx);
+      
+      if(distance > this.speedModifier){
+        this.speedX = this.dx / distance || 0;
+        this.speedY = this.dy / distance || 0;
+      }else{
+        this.speedX = 0;
+        this.speedY = 0;
+      }
+      
+      this.collisionX += this.speedX * this.speedModifier;
+      this.collisionY += this.speedY * this.speedModifier;
     }
   }
 
@@ -71,20 +110,28 @@ window.addEventListener("load", () => {
       this.canvas.addEventListener('mousemove', (e) => { // automatically inherit reference to this from parent scope
         // console.log(e.x, e.y); // gives coordinates from the top left
         // console.log(e.offsetX, e.offsetY); // gives coordinates from the click on the target node
-        this.mouse.x = e.offsetX;
-        this.mouse.y = e.offsetY;
+        if(this.mouse.pressed){
+          this.mouse.x = e.offsetX;
+          this.mouse.y = e.offsetY;
+        }
       });
       
     }
 
     render(context) {
       this.player.draw(context);
+      this.player.update();
     }
   }
 
   const game = new Game(canvas);
-  game.render(ctx);
-
+  
   // Animation loop to draw and update game
-  function animate() {}
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear old paint, prevents trails
+    game.render(ctx);
+    window.requestAnimationFrame(animate); // create endless loop
+  }
+  
+  animate();
 });
