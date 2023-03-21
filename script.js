@@ -43,6 +43,38 @@ window.addEventListener("load", () => {
       this.width = this.canvas.width;
       this.height = this.canvas.height;
       this.player = new Player(this);
+      
+      this.mouse = {
+        x: this.width * 0.5,
+        y: this.height * 0.5,
+        pressed: false
+      };
+      
+      // automatically register event listeners upon instantiating
+      
+      this.canvas.addEventListener('mousedown', (e) => { // automatically inherit reference to this from parent scope
+        // console.log(e.x, e.y); // gives coordinates from the top left
+        // console.log(e.offsetX, e.offsetY); // gives coordinates from the click on the target node
+        this.mouse.x = e.offsetX;
+        this.mouse.y = e.offsetY;
+        this.mouse.pressed = true;
+      });
+      
+      this.canvas.addEventListener('mouseup', (e) => { // automatically inherit reference to this from parent scope
+        // console.log(e.x, e.y); // gives coordinates from the top left
+        // console.log(e.offsetX, e.offsetY); // gives coordinates from the click on the target node
+        this.mouse.x = e.offsetX;
+        this.mouse.y = e.offsetY;
+        this.mouse.pressed = false;
+      });
+      
+      this.canvas.addEventListener('mousemove', (e) => { // automatically inherit reference to this from parent scope
+        // console.log(e.x, e.y); // gives coordinates from the top left
+        // console.log(e.offsetX, e.offsetY); // gives coordinates from the click on the target node
+        this.mouse.x = e.offsetX;
+        this.mouse.y = e.offsetY;
+      });
+      
     }
 
     render(context) {
