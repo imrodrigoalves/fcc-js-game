@@ -147,9 +147,40 @@ window.addEventListener("load", () => {
       });
     }
 
-    init() { 
-      for (let i = 0; i < this.numberOfObstacles; i++) {
-        this.obstacles.push(new Obstacle(this));
+    init() {
+      // for (let i = 0; i < this.numberOfObstacles; i++) {
+      //   this.obstacles.push(new Obstacle(this));
+      // }
+
+      // circle packing algorith
+      // it's a brute force algo, not smart that retries many times
+
+      let attempts = 0;
+      while (this.obstacles.length < this.numberOfObstacles && attempts < 500) {
+        let testObstacle = new Obstacle(this);
+        let overlap = false;
+
+        this.obstacles.forEach((obstacle) => {
+          // circle collision detection formula - calculate distance between center distance of two points
+
+          const dx = testObstacle.collisionX - obstacle.collisionX; // horizontal distance
+          const dy = testObstacle.collisionY - obstacle.collisionY; // vertical distance
+          const distance = Math.hypot(dy, dx); // hypotenuse (pythagoras)
+
+          const sumOfRadii =
+            testObstacle.collisionRadius + obstacle.collisionRadius;
+
+          if (distance < sumOfRadii) {
+            overlap = true;
+          }
+
+        });
+        
+        if (!overlap) {
+          this.obstacles.push(testObstacle);
+        }
+        
+        attempts++;
       }
     }
 
@@ -164,7 +195,9 @@ window.addEventListener("load", () => {
 
   const game = new Game(canvas);
   game.init();
-  
+
+  console.log(game);
+
   // Animation loop to draw and update game
   function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear old paint, prevents trails
