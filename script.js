@@ -92,10 +92,13 @@ window.addEventListener("load", () => {
       this.height = this.spriteHeight;
       this.spriteX = this.collisionX - this.width * 0.5; // centers the image to the middle horizontally
       this.spriteY = this.collisionY - this.height * 0.5 - 70; // centers the image to the middle vertically
+      
+      this.frameX = Math.floor(Math.random() * 4);
+      this.frameY = Math.floor(Math.random() * 3);
     }
 
     draw(context) {
-      context.drawImage(this.image, 0, 0, this.spriteWidth, this.spriteHeight, this.spriteX, this.spriteY, this.width, this.height);
+      context.drawImage(this.image, this.frameX * this.spriteWidth, this.frameY * this.spriteHeight, this.spriteWidth, this.spriteHeight, this.spriteX, this.spriteY, this.width, this.height);
       context.beginPath();
       context.arc(
         this.collisionX,
