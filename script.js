@@ -118,6 +118,7 @@ window.addEventListener("load", () => {
       this.canvas = canvas;
       this.width = this.canvas.width;
       this.height = this.canvas.height;
+      this.topMargin = 150;
       this.player = new Player(this);
       this.numberOfObstacles = 10;
       this.obstacles = [];
@@ -176,10 +177,10 @@ window.addEventListener("load", () => {
 
           const dx = testObstacle.collisionX - obstacle.collisionX; // horizontal distance
           const dy = testObstacle.collisionY - obstacle.collisionY; // vertical distance
+          const distanceBuffer = 100;
           const distance = Math.hypot(dy, dx); // hypotenuse (pythagoras)
 
-          const sumOfRadii =
-            testObstacle.collisionRadius + obstacle.collisionRadius;
+          const sumOfRadii = testObstacle.collisionRadius + obstacle.collisionRadius + distanceBuffer;
 
           if (distance < sumOfRadii) {
             overlap = true;
@@ -187,7 +188,16 @@ window.addEventListener("load", () => {
 
         });
         
-        if (!overlap) {
+        const margin = testObstacle.collisionRadius * 2;
+        
+        // check if the obstacle is inside the canvas and only allow inside game area of base image
+        if (
+          !overlap 
+          && testObstacle.spriteX > 0 
+          && testObstacle.spriteX < this.width - testObstacle.width
+          && testObstacle.collisionY > this.topMargin + margin 
+          && testObstacle.collisionY < this.height - margin
+        ) {
           this.obstacles.push(testObstacle);
         }
         
