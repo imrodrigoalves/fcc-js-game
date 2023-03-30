@@ -7,6 +7,7 @@ window.addEventListener("load", () => {
   ctx.fillStyle = "white";
   ctx.lineWidth = 2;
   ctx.strokeStyle = "white";
+  
   class Player {
     constructor(game) {
       this.game = game;
@@ -81,10 +82,20 @@ window.addEventListener("load", () => {
       this.game = game;
       this.collisionX = Math.random() * this.game.width;
       this.collisionY = Math.random() * this.game.height;
-      this.collisionRadius = 100;
+      this.collisionRadius = 60;
+      
+      // set image on obstacle
+      this.image = document.getElementById('obstacles');
+      this.spriteWidth = 250; // width divided by number of columns
+      this.spriteHeight = 250; // height divided by number of rows
+      this.width = this.spriteWidth;
+      this.height = this.spriteHeight;
+      this.spriteX = this.collisionX - this.width * 0.5; // centers the image to the middle horizontally
+      this.spriteY = this.collisionY - this.height * 0.5 - 70; // centers the image to the middle vertically
     }
 
     draw(context) {
+      context.drawImage(this.image, 0, 0, this.spriteWidth, this.spriteHeight, this.spriteX, this.spriteY, this.width, this.height);
       context.beginPath();
       context.arc(
         this.collisionX,
@@ -108,7 +119,7 @@ window.addEventListener("load", () => {
       this.width = this.canvas.width;
       this.height = this.canvas.height;
       this.player = new Player(this);
-      this.numberOfObstacles = 5;
+      this.numberOfObstacles = 10;
       this.obstacles = [];
       this.mouse = {
         x: this.width * 0.5,
