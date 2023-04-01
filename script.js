@@ -22,7 +22,7 @@ window.addEventListener("load", () => {
       
       this.image = document.getElementById('bull');
       this.spriteWidth = 255;
-      this.spriteHeight = 255;
+      this.spriteHeight = 256;
       this.width = this.spriteWidth;
       this.height = this.spriteHeight;
       this.spriteX; // centers the image to the middle horizontally
@@ -178,6 +178,9 @@ window.addEventListener("load", () => {
 
   class Game {
     constructor(canvas) {
+      this.fps = 60;
+      this.timer = 0;
+      this.interval = 1000 / this.fps; // 1 seconds / fps = amount of ms needed to reach fps
       this.debug = false;
       this.canvas = canvas;
       this.width = this.canvas.width;
@@ -292,26 +295,34 @@ window.addEventListener("load", () => {
       ];
     }
 
-    render(context) {
-      this.player.draw(context);
-      this.player.update();
-      this.obstacles.forEach((obstacle) => {
-        obstacle.draw(context);
-      });
+    render(context, deltaTime) {
+      
+      if(this.timer > this.interval){ // if timer has passed the ms needed to reach fps then draw and update
+        context.clearRect(0, 0, this.width, this.height); // Clear old paint, prevents trails      
+        this.player.draw(context);
+        this.player.update();
+        this.obstacles.forEach((obstacle) => {
+          obstacle.draw(context);
+        });
+        this.timer = 0;
+      }
+      
+      this.timer += deltaTime
     }
   }
 
   const game = new Game(canvas);
   game.init();
 
-  console.log(game);
-
+  let lastTime = 0;
   // Animation loop to draw and update game
-  function animate() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear old paint, prevents trails
-    game.render(ctx);
-    window.requestAnimationFrame(animate); // create endless loop
+  function animate(timestamp) {
+    //calculate delta time between frames
+    const deltaTime = timestamp - lastTime; // time between frames
+    lastTime = timestamp; // update lastTime to current timestamp
+    game.render(ctx, deltaTime); 
+    window.requestAnimationFrame(animate); // create endless loop - automatically passes a timestamp back
   }
 
-  animate();
+  animate(lastTime);
 });
