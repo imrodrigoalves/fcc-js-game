@@ -18,7 +18,7 @@ window.addEventListener("load", () => {
       this.speedY = 0;
       this.dx = 0; // Distance between mouse and player horizontally
       this.dy = 0; // Distance between mouse and player vertically
-      this.speedModifier = 5;
+      this.speedModifier = 20;
     }
 
     draw(context) {
@@ -77,8 +77,14 @@ window.addEventListener("load", () => {
       
       // Collision detection
       this.game.obstacles.forEach((obstacle) => {
-        if(this.game.checkCollsiion(this, obstacle)){
-          console.log('collision detected');
+        let [collision, distance, sumOfRadii, dx, dy] = this.game.checkCollsiion(this, obstacle);
+        
+        if(collision){
+          // push the player away from the obstacle
+          const unit_x = dx / distance;
+          const unit_y = dy / distance;
+          this.collisionX = obstacle.collisionX + (sumOfRadii + 1 ) * unit_x;
+          this.collisionY = obstacle.collisionY + (sumOfRadii + 1 ) * unit_y;
         }
       });
     }
@@ -225,7 +231,13 @@ window.addEventListener("load", () => {
       // if distance is more than sum of radii, then there is no collision
       // if distance is equal to sum of radii, then they're touching
       
-      return (distance < sumOfRadii);
+      return [
+        (distance < sumOfRadii),
+        distance,
+        sumOfRadii,
+        dx,
+        dy
+      ];
     }
 
     render(context) {
