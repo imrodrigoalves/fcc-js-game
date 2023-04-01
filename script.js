@@ -13,15 +13,27 @@ window.addEventListener("load", () => {
       this.game = game;
       this.collisionX = this.game.width * 0.5; // Defines position on X axis
       this.collisionY = this.game.height * 0.5; // Defines position on Y axis
-      this.collisionRadius = 30; // Defines size of object
+      this.collisionRadius = 40; // Defines size of object
       this.speedX = 0;
       this.speedY = 0;
       this.dx = 0; // Distance between mouse and player horizontally
       this.dy = 0; // Distance between mouse and player vertically
-      this.speedModifier = 20;
+      this.speedModifier = 5;
+      
+      this.image = document.getElementById('bull');
+      this.spriteWidth = 255;
+      this.spriteHeight = 255;
+      this.width = this.spriteWidth;
+      this.height = this.spriteHeight;
+      this.spriteX; // centers the image to the middle horizontally
+      this.spriteY; // centers the image to the middle vertically
+      
+      this.frameX = 0; // represents sprite row
+      this.frameY = 0; // represents sprite column
     }
 
     draw(context) {
+      context.drawImage(this.image, this.frameX * this.spriteWidth, this.frameY * this.spriteHeight, this.spriteWidth, this.spriteHeight, this.spriteX, this.spriteY, this.width, this.height);
       context.beginPath();
       context.arc(
         this.collisionX,
@@ -50,6 +62,7 @@ window.addEventListener("load", () => {
     }
 
     update() {
+      
       // Technique 1:
       // Find diference between mouse position and player position. Divide to make it slower
       // Isn't a constant velocity because it decreases the closer it gets to the point
@@ -63,6 +76,16 @@ window.addEventListener("load", () => {
       this.dx = this.game.mouse.x - this.collisionX;
       this.dy = this.game.mouse.y - this.collisionY;
       const distance = Math.hypot(this.dy, this.dx);
+      
+      const angle = Math.atan2(this.dy, this.dx);
+      if(angle < -2.74 || angle > 2.74) this.frameY = 6;
+      else if(angle < -1.96) this.frameY = 7;
+      else if(angle < -1.17) this.frameY = 0;
+      else if(angle < -0.39) this.frameY = 1;
+      else if(angle < 0.39) this.frameY = 2;
+      else if(angle < 1.17) this.frameY = 3;
+      else if(angle < 1.96) this.frameY = 4;
+      else if(angle < 2.74) this.frameY = 5;
 
       if (distance > this.speedModifier) {
         this.speedX = this.dx / distance || 0;
@@ -74,6 +97,9 @@ window.addEventListener("load", () => {
 
       this.collisionX += this.speedX * this.speedModifier;
       this.collisionY += this.speedY * this.speedModifier;
+      
+      this.spriteX = this.collisionX - this.width * 0.5; // centers the image to the middle horizontally
+      this.spriteY = this.collisionY - this.height * 0.5 - 100; // centers the image to the middle vertically
       
       // Collision detection
       this.game.obstacles.forEach((obstacle) => {
