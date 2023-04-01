@@ -74,6 +74,13 @@ window.addEventListener("load", () => {
 
       this.collisionX += this.speedX * this.speedModifier;
       this.collisionY += this.speedY * this.speedModifier;
+      
+      // Collision detection
+      this.game.obstacles.forEach((obstacle) => {
+        if(this.game.checkCollsiion(this, obstacle)){
+          console.log('collision detected');
+        }
+      });
     }
   }
 
@@ -206,6 +213,19 @@ window.addEventListener("load", () => {
         
         attempts++;
       }
+    }
+    
+    checkCollsiion(a, b) {
+      const dx = a.collisionX - b.collisionX; // horizontal distance
+      const dy = a.collisionY - b.collisionY; // vertical distance
+      const distance = Math.hypot(dy, dx); // hypotenuse (pythagoras)
+      
+      const sumOfRadii = a.collisionRadius + b.collisionRadius;
+      // if distance is less than sum of radii, then there is a collision
+      // if distance is more than sum of radii, then there is no collision
+      // if distance is equal to sum of radii, then they're touching
+      
+      return (distance < sumOfRadii);
     }
 
     render(context) {
