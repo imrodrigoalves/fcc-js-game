@@ -34,31 +34,34 @@ window.addEventListener("load", () => {
 
     draw(context) {
       context.drawImage(this.image, this.frameX * this.spriteWidth, this.frameY * this.spriteHeight, this.spriteWidth, this.spriteHeight, this.spriteX, this.spriteY, this.width, this.height);
-      context.beginPath();
-      context.arc(
-        this.collisionX,
-        this.collisionY,
-        this.collisionRadius,
-        0,
-        Math.PI * 2
-      );
-
-      // save() and restore() applies specific settings to selected shapes
-      // without affecting other drawings
-
-      context.save(); // Creates a snapshot of the current canvas status
-      context.globalAlpha = 0.5; // Sets opacity of the shapes
-      context.fill();
-      context.restore(); // Restores previous status
-
-      context.stroke();
-
-      // new shape
-
-      context.beginPath();
-      context.moveTo(this.collisionX, this.collisionY); // draw starting points
-      context.lineTo(this.game.mouse.x, this.game.mouse.y); // draw ending point
-      context.stroke(); // draw the line
+      
+      if(this.game.debug){
+        context.beginPath();
+        context.arc(
+          this.collisionX,
+          this.collisionY,
+          this.collisionRadius,
+          0,
+          Math.PI * 2
+        );
+  
+        // save() and restore() applies specific settings to selected shapes
+        // without affecting other drawings
+  
+        context.save(); // Creates a snapshot of the current canvas status
+        context.globalAlpha = 0.5; // Sets opacity of the shapes
+        context.fill();
+        context.restore(); // Restores previous status
+  
+        context.stroke();
+    
+        // new shape
+  
+        context.beginPath();
+        context.moveTo(this.collisionX, this.collisionY); // draw starting points
+        context.lineTo(this.game.mouse.x, this.game.mouse.y); // draw ending point
+        context.stroke(); // draw the line
+      }
     }
 
     update() {
@@ -121,7 +124,7 @@ window.addEventListener("load", () => {
       this.game = game;
       this.collisionX = Math.random() * this.game.width;
       this.collisionY = Math.random() * this.game.height;
-      this.collisionRadius = 60;
+      this.collisionRadius = 40;
       
       // set image on obstacle
       this.image = document.getElementById('obstacles');
@@ -138,25 +141,29 @@ window.addEventListener("load", () => {
 
     draw(context) {
       context.drawImage(this.image, this.frameX * this.spriteWidth, this.frameY * this.spriteHeight, this.spriteWidth, this.spriteHeight, this.spriteX, this.spriteY, this.width, this.height);
-      context.beginPath();
-      context.arc(
-        this.collisionX,
-        this.collisionY,
-        this.collisionRadius,
-        0,
-        Math.PI * 2
-      );
-
-      context.save();
-      context.globalAlpha = 0.5;
-      context.fill();
-      context.restore();
-      context.stroke();
+      
+      if(this.game.debug){
+        context.beginPath();
+        context.arc(
+          this.collisionX,
+          this.collisionY,
+          this.collisionRadius,
+          0,
+          Math.PI * 2
+        );
+  
+        context.save();
+        context.globalAlpha = 0.5;
+        context.fill();
+        context.restore();
+        context.stroke();
+      }
     }
   }
 
   class Game {
     constructor(canvas) {
+      this.debug = false;
       this.canvas = canvas;
       this.width = this.canvas.width;
       this.height = this.canvas.height;
@@ -198,6 +205,10 @@ window.addEventListener("load", () => {
           this.mouse.x = e.offsetX;
           this.mouse.y = e.offsetY;
         }
+      });
+      
+      window.addEventListener('keydown' , (e) => {
+        if(e.key == 'd') this.debug = !this.debug;
       });
     }
 
