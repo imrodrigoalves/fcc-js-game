@@ -13,7 +13,7 @@ window.addEventListener("load", () => {
       this.game = game;
       this.collisionX = this.game.width * 0.5; // Defines position on X axis
       this.collisionY = this.game.height * 0.5; // Defines position on Y axis
-      this.collisionRadius = 40; // Defines size of object
+      this.collisionRadius = 30; // Defines size of object
       this.speedX = 0;
       this.speedY = 0;
       this.dx = 0; // Distance between mouse and player horizontally
@@ -103,6 +103,21 @@ window.addEventListener("load", () => {
       
       this.spriteX = this.collisionX - this.width * 0.5; // centers the image to the middle horizontally
       this.spriteY = this.collisionY - this.height * 0.5 - 100; // centers the image to the middle vertically
+      
+      // horizontal boundary
+      if(this.collisionX < this.collisionRadius){
+        this.collisionX = this.collisionRadius;
+      }else if (this.collisionX > this.game.width - this.collisionRadius){
+        this.collisionX = this.game.width - this.collisionRadius;
+      }
+      
+      // vertical boundary
+      
+      if(this.collisionY < this.game.topMargin + this.collisionRadius){
+        this.collisionY = this.game.topMargin + this.collisionRadius;
+      }else if (this.collisionY > this.game.height - this.collisionRadius){
+        this.collisionY = this.game.height - this.collisionRadius;
+      }
       
       // Collision detection
       this.game.obstacles.forEach((obstacle) => {
@@ -241,7 +256,7 @@ window.addEventListener("load", () => {
 
         });
         
-        const margin = testObstacle.collisionRadius * 2;
+        const margin = testObstacle.collisionRadius * 3;
         
         // check if the obstacle is inside the canvas and only allow inside game area of base image
         if (
